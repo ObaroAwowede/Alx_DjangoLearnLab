@@ -68,31 +68,3 @@ def queries():
     else:
         print(f"Cannot retrieve librarian because the library '{library_name}' was not found in the previous step.")
     
-    # ##query for listing all books in a library
-    # try:
-    #     library_name = "the library of Ohara"
-    #     ohara_library = Library.objects.get(name=library_name)
-    #     books_in_ohara = ohara_library.books.all()
-
-    #     if books_in_ohara.exists():
-    #         print("The books in the library of Ohana are:")
-    #         for book in books_in_ohara:
-    #             print(f" - {book.title}")
-    #     else:
-    #         print("No books exist in this library")
-    
-    # except:
-    #     print("The library Ohara does not exist")
-        
-    # ## query to retrieve librarian
-    
-    # try:
-    #     library_name = "the library of Ohara"
-    #     # ohara_library = Library.objects.get(name=library_name)
-    #     ohara_librarian = Librarian.objects.get(library=library_name)
-    #     print(f"The librarian for {ohara_library.name} is {ohara_librarian.name}")
-    # except ohara_library.DoesNotExist():
-    #     print("This library was not found")
-    # except ohara_librarian.DoesNotExist():
-    #     print(f"This librarian was not assigned to {ohara_library.name}")
-        
