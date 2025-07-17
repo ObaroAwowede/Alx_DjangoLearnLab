@@ -37,7 +37,8 @@ def queries():
     
     ##query for listing all books in a library
     try:
-        ohara_library = Library.objects.get(name = "the library of Ohara")
+        library_name = "the library of Ohara"
+        ohara_library = Library.objects.get(name = library_name)
         books_in_ohara = ohara_library.books.all()
 
         if books_in_ohara.exists():
@@ -53,7 +54,8 @@ def queries():
     ## query to retrieve librarian
     
     try:
-        ohara_library = Library.objects.get(name = "the library of Ohara")
+        library_name = "the library of Ohara"
+        ohara_library = Library.objects.get(name = library_name)
         ohara_librarian = ohara_library.librarian
         print(f"The librarian for {ohara_library.name} is {ohara_librarian.name}")
     except ohara_library.DoesNotExist():
