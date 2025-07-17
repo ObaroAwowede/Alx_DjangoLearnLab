@@ -55,7 +55,7 @@ def queries():
     
     try:
         library_name = "the library of Ohara"
-        ohara_library = Library.objects.get(name = library_name)
+        Library.objects.get(name = library_name)
         ohara_librarian = ohara_library.librarian
         print(f"The librarian for {ohara_library.name} is {ohara_librarian.name}")
     except ohara_library.DoesNotExist():
