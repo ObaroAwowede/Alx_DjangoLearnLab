@@ -36,7 +36,7 @@ def queries():
         print("Author not found")
     
     ##query for listing all books in a library
-    try:
+    # try:
         library_name = "the library of Ohara"
         ohara_library = Library.objects.get(name = library_name)
         books_in_ohara = ohara_library.books.all()
@@ -48,8 +48,8 @@ def queries():
         else:
             print("No books exist in this library")
     
-    except:
-        print("The library Ohara does not exist")
+    # except:
+    #     print("The library Ohara does not exist")
         
     ## query to retrieve librarian
     
