@@ -35,32 +35,64 @@ def queries():
                 
     except Author.DoesNotExist:
         print("Author not found")
+        
+
+    library_name = "the library of Ohara"
+    ohara_library = ""
     
-    ##query for listing all books in a library
     try:
-        library_name = "the library of Ohara"
         ohara_library = Library.objects.get(name=library_name)
         books_in_ohara = ohara_library.books.all()
 
         if books_in_ohara.exists():
-            print("The books in the library of Ohana are:")
+            print(f"The books in {ohara_library.name} are:")
             for book in books_in_ohara:
                 print(f" - {book.title}")
         else:
-            print("No books exist in this library")
+            print(f"No books exist in {ohara_library.name}.")
+
+    except Library.DoesNotExist:
+        print(f"The library '{library_name}' does not exist.")
+    except Exception as e:
+        print(f"An error occurred while fetching the library or books: {e}")
+
+    if ohara_library: 
+        try:
+            ohara_librarian = Librarian.objects.get(library=ohara_library)
+            print(f"The librarian for {ohara_library.name} is {ohara_librarian.name}.")
+        except Librarian.DoesNotExist:
+            
+            print(f"No librarian was found for {ohara_library.name}.")
+        except Exception as e:
+            print(f"An unexpected error occurred while fetching the librarian: {e}")
+    else:
+        print(f"Cannot retrieve librarian because the library '{library_name}' was not found in the previous step.")
     
-    except:
-        print("The library Ohara does not exist")
+    # ##query for listing all books in a library
+    # try:
+    #     library_name = "the library of Ohara"
+    #     ohara_library = Library.objects.get(name=library_name)
+    #     books_in_ohara = ohara_library.books.all()
+
+    #     if books_in_ohara.exists():
+    #         print("The books in the library of Ohana are:")
+    #         for book in books_in_ohara:
+    #             print(f" - {book.title}")
+    #     else:
+    #         print("No books exist in this library")
+    
+    # except:
+    #     print("The library Ohara does not exist")
         
-    ## query to retrieve librarian
+    # ## query to retrieve librarian
     
-    try:
-        library_name = "the library of Ohara"
-        ohara_library = Library.objects.get(name=library_name)
-        ohara_librarian = ohara_library.librarian
-        print(f"The librarian for {ohara_library.name} is {ohara_librarian.name}")
-    except ohara_library.DoesNotExist():
-        print("This library was not found")
-    except ohara_librarian.DoesNotExist():
-        print(f"This librarian was not assigned to {ohara_library.name}")
+    # try:
+    #     library_name = "the library of Ohara"
+    #     # ohara_library = Library.objects.get(name=library_name)
+    #     ohara_librarian = Librarian.objects.get(library=library_name)
+    #     print(f"The librarian for {ohara_library.name} is {ohara_librarian.name}")
+    # except ohara_library.DoesNotExist():
+    #     print("This library was not found")
+    # except ohara_librarian.DoesNotExist():
+    #     print(f"This librarian was not assigned to {ohara_library.name}")
         
