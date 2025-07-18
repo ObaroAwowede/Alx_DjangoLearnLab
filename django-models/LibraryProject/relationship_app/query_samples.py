@@ -25,7 +25,7 @@ def queries():
     try:
         author_name = "Tolkien"
         author = Author.objects.get(name=author_name)
-        books_by_tolkien = objects.filter(author=author)
+        books_by_tolkien = Book.objects.filter(author=author)
         if books_by_tolkien.exists():
             print("Below are the books:")
             for book in books_by_tolkien:
