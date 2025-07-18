@@ -15,7 +15,8 @@ class Book(models.Model):
 class Library(models.Model):
     name = models.CharField(max_length = 100)
     books = models.ManyToManyField(Book)
-    return self.name
+    def __str__(self):
+        return self.name
     
 class Librarian(models.Model):
     name = models.CharField(max_length = 100)
@@ -24,4 +25,5 @@ class Librarian(models.Model):
         on_delete = models.CASCADE,
         primary_key = True
     )
-    return f"{self.name} in {self.library.name}"
+    def __str__(self):
+        return f"{self.name} in {self.library.name}"
