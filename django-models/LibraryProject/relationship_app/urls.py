@@ -1,6 +1,10 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import LibraryDetailView, UserRegistrationView, list_books, register, admin_dashboard_view, librarian_dashboard_view
+from .views import LibraryDetailView, UserRegistrationView
+from .views import list_books
+from .views import register
+from .views import admin_dashboard_view
+from .views import librarian_dashboard_view
 from .views import member_dashboard_view, BookCreateView, BookDeleteView, BookUpdateView
 from . import views
 
