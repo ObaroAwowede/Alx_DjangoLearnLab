@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Library
+from django.contrib.auth.decorators import user_passes_test
 from .models import Book, Author, Librarian
 from django.views.generic.detail import DetailView
 from django.views.generic import CreateView
@@ -46,3 +47,33 @@ class UserLoginView(LoginView):
    
 class UserLogoutView(LogoutView):
     template_name = 'logout.html'
+
+
+def is_admin(user):
+    """Checks if the user is authenticated and has the 'Admin' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
+
+def is_librarian(user):
+    """Checks if the user is authenticated and has the 'Librarian' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    """Checks if the user is authenticated and has the 'Member' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
+# --- Role-Based Dashboard Views ---
+
+@user_passes_test(is_admin, login_url='/login/')
+def admin_dashboard_view(request):
+    """View for Admin users."""
+    return render(request, 'relationship_app/admin_view.html', {'user': request.user})
+
+@user_passes_test(is_librarian, login_url='/login/')
+def librarian_dashboard_view(request):
+    """View for Librarian users."""
+    return render(request, 'relationship_app/librarian_view.html', {'user': request.user})
+
+@user_passes_test(is_member, login_url='/login/')
+def member_dashboard_view(request):
+    """View for Member users."""
+    return render(request, 'relationship_app/member_view.html', {'user': request.user})

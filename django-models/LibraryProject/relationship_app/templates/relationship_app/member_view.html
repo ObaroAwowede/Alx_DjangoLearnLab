@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard</title>
+    </head>
+<body>
+    <div>
+        <h1>Welcome, Member {{ user.username }}!</h1>
+        <p>You are logged in as a <span>{{ user.userprofile.role }}</span>.</p>
+        <p>Explore our vast collection of books and manage your borrowings here.</p>
+        <ul>
+            <li>Browse Books</li>
+            <li>View My Borrowed Books</li>
+            <li>Update Profile</li>
+        </ul>
+        <div>
+            <a href="{% url 'relationship_app:logout' %}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

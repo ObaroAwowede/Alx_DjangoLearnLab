@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <div>
+        <h1>Welcome, Admin {{ user.username }}!</h1>
+        <p>You are logged in as an <span>{{ user.userprofile.role }}</span>.</p>
+        <p>This is the exclusive dashboard for administrators. Here you can manage users, roles, and overall system settings.</p>
+        <ul>
+            <li>Manage Users</li>
+            <li>Manage Libraries</li>
+            <li>View System Logs</li>
+        </ul>
+        <div>
+            <a href="{% url 'relationship_app:logout' %}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
