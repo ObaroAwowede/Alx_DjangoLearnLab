@@ -9,6 +9,16 @@ from .forms import CustomUserCreationForm
 from django.contrib.auth import login 
 from django.contrib.auth.forms import UserCreationForm 
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('relationship_app:login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
+
 
 def list_books(request):
     books = Book.objects.all()
