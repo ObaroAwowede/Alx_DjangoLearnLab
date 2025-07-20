@@ -1,0 +1,22 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if book %}Edit Book{% else %}Add New Book{% endif %}</title>
+</head>
+<body>
+    <div>
+        <h1>{% if book %}Edit Book: {{ book.title }}{% else %}Add New Book{% endif %}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">{% if book %}Update Book{% else %}Add Book{% endif %}</button>
+        </form>
+        <div>
+            <a href="{% url 'relationship_app:book_list' %}">Back to Book List</a>
+        </div>
+    </div>
+</body>
+</html>

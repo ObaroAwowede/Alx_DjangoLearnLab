@@ -1,17 +1,20 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from .views import LibraryDetailView, UserRegistrationView, list_books, register, admin_dashboard_view, librarian_dashboard_view
+from .views import member_dashboard_view, BookCreateView, BookDeleteView, BookUpdateView
 from . import views
-from .views import LibraryDetailView, UserRegistrationView, list_books
 
 app_name = 'relationship_app'
-
 urlpatterns = [
-    path('libraries/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
-    path('books/', list_books, name='book_list'),
+    path('libraries/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
+    path('books/', views.list_books, name='book_list'),
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='relationship_app/logged_out.html'), name='logout'),
     path('admin/dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
     path('librarian/dashboard/', views.librarian_dashboard_view, name='librarian_dashboard'),
     path('member/dashboard/', views.member_dashboard_view, name='member_dashboard'),
+    path('books/<int:pk>/edit/', views.BookUpdateView.as_view(), name='book_edit'),
+    path('books/<int:pk>/delete/', views.BookDeleteView.as_view(), name='book_delete'),
+    path('books/add/', views.BookCreateView.as_view(), name='book_add'),
 ]

@@ -1,14 +1,21 @@
 from django.shortcuts import render
 from .models import Library
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, permission_required
 from .models import Book, Author, Librarian
 from django.views.generic.detail import DetailView
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm
 from django.contrib.auth import login 
 from django.contrib.auth.forms import UserCreationForm 
+from django import forms
+from django.utils.decorators import method_decorator
+
+class BookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ['title', 'author']
 
 def register(request):
     if request.method == 'POST':
@@ -50,30 +57,44 @@ class UserLogoutView(LogoutView):
 
 
 def is_admin(user):
-    """Checks if the user is authenticated and has the 'Admin' role."""
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
 
 def is_librarian(user):
-    """Checks if the user is authenticated and has the 'Librarian' role."""
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
 
 def is_member(user):
-    """Checks if the user is authenticated and has the 'Member' role."""
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
-
-# --- Role-Based Dashboard Views ---
 
 @user_passes_test(is_admin, login_url='/login/')
 def admin_dashboard_view(request):
-    """View for Admin users."""
     return render(request, 'relationship_app/admin_view.html', {'user': request.user})
 
 @user_passes_test(is_librarian, login_url='/login/')
 def librarian_dashboard_view(request):
-    """View for Librarian users."""
     return render(request, 'relationship_app/librarian_view.html', {'user': request.user})
 
 @user_passes_test(is_member, login_url='/login/')
 def member_dashboard_view(request):
-    """View for Member users."""
     return render(request, 'relationship_app/member_view.html', {'user': request.user})
+
+@method_decorator(permission_required('relationship_app.can_add_book', login_url='/login/'), name='dispatch')
+class BookCreateView(CreateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'relationship_app/book_form.html'
+    success_url = reverse_lazy('relationship_app:book_list')
+
+@method_decorator(permission_required('relationship_app.can_change_book', login_url='/login/'), name='dispatch')
+class BookUpdateView(UpdateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'relationship_app/book_form.html'
+    context_object_name = 'book'
+    success_url = reverse_lazy('relationship_app:book_list')
+
+@method_decorator(permission_required('relationship_app.can_delete_book', login_url='/login/'), name='dispatch')
+class BookDeleteView(DeleteView):
+    model = Book
+    template_name = 'relationship_app/book_confirm_delete.html'
+    context_object_name = 'book'
+    success_url = reverse_lazy('relationship_app:book_list')
