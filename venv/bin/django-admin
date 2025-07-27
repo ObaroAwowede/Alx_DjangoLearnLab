@@ -1,4 +1,6 @@
-#!/Users/mac/Desktop/Alx_DjangoLearnLab/venv/bin/python3.13
+#!/bin/sh
+'''exec' "/Users/mac/Desktop/Alx Backend/Alx_DjangoLearnLab/venv/bin/python3.13" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys

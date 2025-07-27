@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard</title>
+</head>
+<body>
+    <div>
+        <h1>Welcome, Librarian {{ user.username }}!</h1>
+        <p>You are logged in as a <span>{{ user.userprofile.role }}</span>.</p>
+        <p>This dashboard provides tools for managing library resources and user borrowings.</p>
+        <ul>
+            <li>Add/Edit Books</li>
+            <li>Manage Borrowings</li>
+            <li>Oversee Member Accounts</li>
+        </ul>
+        <div>
+            <a href="{% url 'relationship_app:logout' %}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
