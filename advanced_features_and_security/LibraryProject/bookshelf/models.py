@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 class Book(models.Model):
     title = models.CharField(max_length = 200)
     author = models.CharField(max_length = 100)
     publication_year = models.IntegerField(default = 1900)    
 
-class CustomUserManager(UserManager):
+class CustomUserManager(BaseUserManager):
     def create_user(self, username, email = None, password = None):
         if not username:
             raise ValueError('Username must be set')
