@@ -194,3 +194,4 @@ class BookAPITestCase(APITestCase):
         results_desc = _results_from_response(response_desc)
         years_desc = [b["publication_year"] for b in results_desc]
         self.assertEqual(years_desc, sorted(years_desc, reverse=True))
+        
