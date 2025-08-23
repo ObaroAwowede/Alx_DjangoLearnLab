@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth import get_user_model
 from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
     
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = get_user_model().objects.create_user(
             username= validated_data["username"],
             email = validated_data.get("email"),
             password = validated_data["password"] 
