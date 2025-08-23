@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'posts',
 ]
 
 MIDDLEWARE = [
