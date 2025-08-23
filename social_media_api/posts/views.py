@@ -1,6 +1,5 @@
 from rest_framework import viewsets, filters
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Post, Comment
@@ -13,7 +12,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.select_related("author").prefetch_related("comments")
+    queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = StandardResultsSetPagination
@@ -24,12 +23,15 @@ class PostViewSet(viewsets.ModelViewSet):
     ordering_fields = ["created_at", "updated_at"]
     ordering = ["-created_at"]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.select_related("author").prefetch_related("comments")
+
     def perform_create(self, serializer):
-        # attaches request user as author if available
         serializer.save(author=self.request.user)
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.select_related("author", "post")
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsOwnerOrReadOnly]
     pagination_class = StandardResultsSetPagination
@@ -39,6 +41,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     search_fields = ["content"]
     ordering_fields = ["created_at", "updated_at"]
     ordering = ["created_at"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.select_related("author", "post")
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
