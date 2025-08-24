@@ -1,5 +1,4 @@
-from rest_framework import viewsets, filters, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, filters, generics, permissions
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -49,19 +48,20 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        
+
 class FeedView(generics.ListAPIView):
     """
     Returns a feed of posts authored by users the current user follows.
     URL: /api/posts/feed/
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = PostSerializer
     pagination_class = StandardResultsSetPagination
     queryset = Post.objects.all()
 
     def get_queryset(self):
         user = self.request.user
-        # if user follows no-one, return empty queryset
-        following_qs = user.following.all()
-        return Post.objects.filter(author__in=following_qs).order_by("-created_at")
+        if not user.is_authenticated:
+            return Post.objects.none()
+        following_users = user.following.all()
+        return Post.objects.filter(author__in=following_users).order_by("-created_at")
