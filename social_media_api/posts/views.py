@@ -1,14 +1,24 @@
+# posts/views.py
 from rest_framework import viewsets, filters, generics, permissions
 from rest_framework.pagination import PageNumberPagination
-from django_filters.rest_framework import DjangoFilterBackend
-from .models import Like
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer
-from .permissions import IsOwnerOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import get_object_or_404 as django_get_object_or_404
+from django.contrib.contenttypes.models import ContentType
+from django_filters.rest_framework import DjangoFilterBackend
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, CommentSerializer
+from .permissions import IsOwnerOrReadOnly
+
+try:
+    from notifications.models import Notification
+except Exception:
+    Notification = None
+
+if not hasattr(generics, "get_object_or_404"):
+    generics.get_object_or_404 = django_get_object_or_404
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -54,10 +64,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 class FeedView(generics.ListAPIView):
-    """
-    Returns a feed of posts authored by users the current user follows.
-    URL: /api/posts/feed/
-    """
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PostSerializer
     pagination_class = StandardResultsSetPagination
@@ -69,25 +75,26 @@ class FeedView(generics.ListAPIView):
             return Post.objects.none()
         following_users = user.following.all()
         return Post.objects.filter(author__in=following_users).order_by("-created_at")
-    
+
+
 class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        # like a post
-        try:
-            post = Post.objects.get(pk=pk)
-        except Post.DoesNotExist:
-            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        user = request.user
-        liked, created = Like.objects.get_or_create(post=post, user=user)
+        post = generics.get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             return Response({"detail": "Already liked."}, status=status.HTTP_400_BAD_REQUEST)
-        if post.author != user:
+        if post.author != request.user and Notification is not None:
             try:
-                from notifications.utils import create_notification
-                create_notification(recipient=post.author, actor=user, verb="liked your post", target=post)
+                content_type = ContentType.objects.get_for_model(post.__class__)
+                Notification.objects.create(
+                    recipient=post.author,
+                    actor=request.user,
+                    verb="liked your post",
+                    target_content_type=content_type,
+                    target_object_id=post.pk,
+                )
             except Exception:
                 pass
 
@@ -97,13 +104,9 @@ class UnlikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        try:
-            post = Post.objects.get(pk=pk)
-        except Post.DoesNotExist:
-            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+        post = generics.get_object_or_404(Post, pk=pk)
 
-        user = request.user
-        deleted, _ = Like.objects.filter(post=post, user=user).delete()
-        if deleted == 0:
+        deleted_count, _ = Like.objects.filter(user=request.user, post=post).delete()
+        if deleted_count == 0:
             return Response({"detail": "Not liked."}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"detail": "Post unliked."}, status=status.HTTP_200_OK)
