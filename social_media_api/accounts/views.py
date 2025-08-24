@@ -52,6 +52,11 @@ def follow_user(request, user_id):
         return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
     request.user.following.add(target)
+    try:
+        from notifications.utils import create_notification
+        create_notification(recipient=target, actor=request.user, verb="started following you")
+    except Exception:
+        pass
     followers_count = getattr(target, "followed_by").count() if hasattr(target, "followed_by") else getattr(target, "followers").count()
     return Response(
         {
@@ -61,6 +66,7 @@ def follow_user(request, user_id):
         },
         status=status.HTTP_200_OK
     )
+
 
 
 @api_view(["POST"])
